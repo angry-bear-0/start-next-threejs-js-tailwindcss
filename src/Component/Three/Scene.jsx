@@ -1,32 +1,26 @@
+import { Vector3 } from "three";
 import { Canvas } from "@react-three/fiber";
-import Floor from "./Floor";
-import LightBulb from "./LightBlub";
-import Box from "./Box";
-import OrbitControls from "./OrbitControls";
-import Draggable from "./Draggable";
-import { Suspense } from "react";
-import { GizmoHelper} from "@react-three/drei";
-const Scene = () => {
+import { OrbitControls } from "./OrbitControls";
+
+const Scene = ({
+  children,
+  cameraFov = 75,
+  cameraPosition = new Vector3(-5, 5, 5),
+  controls = true,
+  lights = true,
+  ...restProps
+}) => {
   return (
-    <div className="w-screen h-screen">
-      <Canvas
-        shadows
-        camera={{
-          position: [-6, 7, 7],
-        }}
-      >
-        <GizmoHelper/>
-        <ambientLight color={"white"} intensity={0.3} />
-        <LightBulb position={[0, 3, 3]} />
-        <Draggable>
-          <Suspense fallback={null}>
-            <Box rotation={[0, 30, 0]} />
-          </Suspense>
-        </Draggable>
-        <OrbitControls />
-        <Floor position={[0, -1, 0]} />
-      </Canvas>
-    </div>
+    <Canvas shadows camera={{ position: cameraPosition, fov: cameraFov }} {...restProps}>
+      {children}
+      {lights && (
+        <>
+          <ambientLight intensity={0.8} />
+          <pointLight intensity={1} position={[0, 6, 0]} />
+        </>
+      )}
+      {controls && <OrbitControls makeDefault />}
+    </Canvas>
   );
 }
 
